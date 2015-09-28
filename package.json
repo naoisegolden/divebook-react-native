@@ -6,6 +6,8 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
+    "parse": "^1.6.3",
+    "parse-react": "^0.5.0",
     "react-native": "git://github.com/facebook/react-native.git#master"
   }
 }
