@@ -1,13 +1,8 @@
 'use strict';
 
-var MOCKED_DIVESITE_DATA = [
-  {name: 'Name 01', location: 'Tossa de Mar, Girona, Spain'},
-  {name: 'Name 02', location: 'Puerto del Carmen, Lanzarote, Spain'},
-  {name: 'Name 03', location: 'Illes Medes, Girona, Spain'},
-];
-
 var PARSE_APPLICATION_ID = 'Y31uHUHsSOcmfEjLPt2uvT2Qmc53EuX2JCB0iHsK';
 var PARSE_JAVASCRIPT_KEY = 'PUA1mxzlF8dA6DgQQlK5UhO3zHDOH3tr7mp2usNu';
+var GOOGLE_MAPS_API_KEY = 'AIzaSyBDZOWrvmGMgmhimndfQa9TnFn21M_rTAQ';
 
 var React = require('react-native');
 var Parse = require('parse/react-native');
@@ -15,6 +10,7 @@ var ParseReact = require('parse-react/react-native');
 
 var {
   AppRegistry,
+  Image,
   ListView,
   StyleSheet,
   Text,
@@ -64,11 +60,14 @@ var Divebook = React.createClass({
   },
 
   renderDivesiteView: function(divesite) {
+    var src = this.mapImageSrc(divesite.location)
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Dive Site: {divesite.name}</Text>
-        <Text style={styles.subtitle}>Address: {divesite.address}</Text>
-        <Text style={styles.subtitle}>Location: {divesite.location}</Text>
+        <Image style={styles.image} source={{uri: src}} />
+        <View style={styles.rightContainer}>
+          <Text style={styles.title}>{divesite.name}</Text>
+          <Text style={styles.subtitle}>{divesite.address}</Text>
+        </View>
       </View>
     );
   },
@@ -81,29 +80,37 @@ var Divebook = React.createClass({
       </View>
     );
   },
+  mapImageSrc: function(geopoint) {
+    return `https://maps.googleapis.com/maps/api/staticmap?markers=size:tiny|${geopoint.latitude},${geopoint.longitude}&zoom=8&size=200x200&key=${GOOGLE_MAPS_API_KEY}`
+  },
 });
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
     backgroundColor: '#F5FCFF',
+    borderBottomColor: '#CCCCCC',
+    borderBottomWidth: 1,
+  },
+  rightContainer: {
+    flex: 1,
+    padding: 10,
   },
   title: {
     fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   },
   subtitle: {
-    textAlign: 'center',
     color: '#333333',
-    marginBottom: 5,
   },
   listView: {
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },
+  image: {
+    height: 100,
+    width: 100,
+  }
 });
 
 AppRegistry.registerComponent('Divebook', () => Divebook);
