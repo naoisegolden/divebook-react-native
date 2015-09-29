@@ -7,6 +7,7 @@ var GOOGLE_MAPS_API_KEY = 'AIzaSyBDZOWrvmGMgmhimndfQa9TnFn21M_rTAQ';
 var React = require('react-native');
 var Parse = require('parse/react-native');
 var ParseReact = require('parse-react/react-native');
+var RefreshableListView = require('react-native-refreshable-listview')
 
 var {
   AppRegistry,
@@ -45,16 +46,23 @@ var Divebook = React.createClass({
     }
   },
 
+  reloadListView: function(callback) {
+    return null;
+  },
+
   render: function() {
     if (this.state.loading) {
       return this.renderLoadingView();
     }
 
     return (
-      <ListView
+      <RefreshableListView
         dataSource={this.state.dataSource.cloneWithRows(this.data.divesites)}
         renderRow={this.renderDivesiteView}
         style={styles.listView}
+        loadData={this.reloadListView}
+        refreshDescription="Finding divesites nearby…"
+        renderHeaderWrapper={this.renderHeaderWrapper}
       />
     );
   },
@@ -82,6 +90,13 @@ var Divebook = React.createClass({
   },
   mapImageSrc: function(geopoint) {
     return `https://maps.googleapis.com/maps/api/staticmap?markers=size:tiny|${geopoint.latitude},${geopoint.longitude}&zoom=8&size=200x200&key=${GOOGLE_MAPS_API_KEY}`
+  },
+  renderHeaderWrapper: function(refreshingIndicator) {
+    return (
+      <View>
+        {refreshingIndicator}
+      </View>
+    )
   },
 });
 
