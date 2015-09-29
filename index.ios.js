@@ -45,9 +45,8 @@ var Divebook = React.createClass({
       this.setState({ loading: false });
     }
   },
-
-  reloadListView: function(callback) {
-    return null;
+  reloadListView: function() {
+    this.refreshQueries();
   },
 
   render: function() {
