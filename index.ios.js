@@ -52,26 +52,47 @@ var EmptyView = React.createClass({
 
 var DivesitesList = React.createClass({
   mixins: [ParseReact.Mixin], // Enable query subscriptions
+  watchID: (null: ?number), // to store geolocation watcher
 
   observe: function() {
     // The results will be available at this.data.divesites
     return {
-      divesites: (new Parse.Query('divesite')).descending('createdAt')
+      divesites: (new Parse.Query('divesite')).near('location', this.state.position)
     };
   },
+
   getInitialState: function () {
     return {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loading: true,
+      position: undefined,
     };
   },
+
   componentDidUpdate: function(prevProps, prevState) {
     if (prevState.loading && (this.pendingQueries().length == 0)) {
       this.setState({ loading: false });
     }
   },
+
+  componentDidMount: function() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => this.setState({position: positionToGeoPoint(position)}),
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    this.watchID = navigator.geolocation.watchPosition((position) => {
+      positionToGeoPoint(position)
+      this.setState({position: positionToGeoPoint(position)});
+    });
+  },
+
+  componentWillUnmount: function() {
+    navigator.geolocation.clearWatch(this.watchID);
+  },
+
   reloadListView: function() {
     this.refreshQueries();
   },
@@ -209,5 +230,12 @@ var styles = StyleSheet.create({
 var mapImageSrc = function(geopoint, options = { width: 200, height: 200 }) {
   return `https://maps.googleapis.com/maps/api/staticmap?markers=size:tiny|${geopoint.latitude},${geopoint.longitude}&zoom=8&size=${options.width}x${options.height}&key=${GOOGLE_MAPS_API_KEY}`
 };
+
+var positionToGeoPoint = function(position) {
+  return {
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude
+  }
+}
 
 AppRegistry.registerComponent('Divebook', () => Divebook);
