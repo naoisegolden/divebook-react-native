@@ -13,8 +13,10 @@ var {
   AppRegistry,
   Image,
   ListView,
+  NavigatorIOS,
   StyleSheet,
   Text,
+  TouchableHighlight,
   View,
 } = React;
 
@@ -23,13 +25,23 @@ Parse.initialize(
   PARSE_JAVASCRIPT_KEY,
 );
 
-var Divebook = React.createClass({
+var EmptyView = React.createClass({
+  render: function() {
+    return (
+      <View style={styles.container}>
+        <Text>Empty View</Text>
+      </View>
+    );
+  },
+});
+
+var DivesitesList = React.createClass({
   mixins: [ParseReact.Mixin], // Enable query subscriptions
 
   observe: function() {
     // The results will be available at this.data.divesites
     return {
-      divesites: (new Parse.Query('divesite')).ascending('createdAt')
+      divesites: (new Parse.Query('divesite')).descending('createdAt')
     };
   },
   getInitialState: function () {
@@ -69,20 +81,22 @@ var Divebook = React.createClass({
   renderDivesiteView: function(divesite) {
     var src = this.mapImageSrc(divesite.location)
     return (
-      <View style={styles.container}>
-        <Image style={styles.image} source={{uri: src}} />
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{divesite.name}</Text>
-          <Text style={styles.subtitle}>{divesite.address}</Text>
+      <TouchableHighlight onPress={this.showDivesite.bind(this, divesite)}>
+        <View style={styles.rowContainer}>
+          <Image style={styles.image} source={{uri: src}} />
+          <View style={styles.rightContainer}>
+            <Text style={styles.title}>{divesite.name}</Text>
+            <Text style={styles.subtitle}>{divesite.address}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableHighlight>
     );
   },
   renderLoadingView: function() {
     return (
       <View style={styles.container}>
         <Text>
-          Loading...
+          Loading…
         </Text>
       </View>
     );
@@ -97,10 +111,45 @@ var Divebook = React.createClass({
       </View>
     )
   },
+
+  showDivesite: function(divesite) {
+    this.props.navigator.push({
+      title: `${divesite.name}`,
+      component: DivesiteShow,
+      passProps: { divesite }
+    });
+  },
+});
+
+var Divebook = React.createClass({
+  render: function() {
+    return (
+      <NavigatorIOS
+        style={styles.navigator}
+        initialRoute={{
+          title: 'Divebook',
+          component: DivesitesList,
+        }}
+      />
+    );
+  }
+});
+
+var DivesiteShow = React.createClass({
+  render: function() {
+    return (
+      <View style={styles.container}>
+        <Text>Empty View</Text>
+      </View>
+    );
+  },
 });
 
 var styles = StyleSheet.create({
-  container: {
+  navigator: {
+    flex: 1,
+  },
+  rowContainer: {
     flex: 1,
     flexDirection: 'row',
     backgroundColor: '#F5FCFF',
@@ -111,6 +160,12 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop: 65,
+  },
   title: {
     fontSize: 20,
   },
@@ -118,7 +173,7 @@ var styles = StyleSheet.create({
     color: '#333333',
   },
   listView: {
-    paddingTop: 20,
+    paddingTop: 65,
     backgroundColor: '#F5FCFF',
   },
   image: {
