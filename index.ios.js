@@ -11,6 +11,7 @@ var RefreshableListView = require('react-native-refreshable-listview')
 
 var {
   AppRegistry,
+  Button,
   Image,
   ListView,
   NavigatorIOS,
@@ -24,6 +25,20 @@ Parse.initialize(
   PARSE_APPLICATION_ID,
   PARSE_JAVASCRIPT_KEY,
 );
+
+var Divebook = React.createClass({
+  render: function() {
+    return (
+      <NavigatorIOS
+        style={styles.navigator}
+        initialRoute={{
+          title: 'Divebook',
+          component: DivesitesList,
+        }}
+      />
+    );
+  }
+});
 
 var EmptyView = React.createClass({
   render: function() {
@@ -79,15 +94,15 @@ var DivesitesList = React.createClass({
   },
 
   renderDivesiteView: function(divesite) {
-    var src = this.mapImageSrc(divesite.location)
+    var src = mapImageSrc(divesite.location)
     return (
       <TouchableHighlight onPress={this.showDivesite.bind(this, divesite)}>
         <View style={styles.rowContainer}>
-          <Image style={styles.image} source={{uri: src}} />
           <View style={styles.rightContainer}>
             <Text style={styles.title}>{divesite.name}</Text>
             <Text style={styles.subtitle}>{divesite.address}</Text>
           </View>
+          <Image style={styles.thumb} source={{uri: src}} />
         </View>
       </TouchableHighlight>
     );
@@ -101,9 +116,6 @@ var DivesitesList = React.createClass({
       </View>
     );
   },
-  mapImageSrc: function(geopoint) {
-    return `https://maps.googleapis.com/maps/api/staticmap?markers=size:tiny|${geopoint.latitude},${geopoint.longitude}&zoom=8&size=200x200&key=${GOOGLE_MAPS_API_KEY}`
-  },
   renderHeaderWrapper: function(refreshingIndicator) {
     return (
       <View>
@@ -111,38 +123,35 @@ var DivesitesList = React.createClass({
       </View>
     )
   },
-
   showDivesite: function(divesite) {
     this.props.navigator.push({
-      title: `${divesite.name}`,
       component: DivesiteShow,
-      passProps: { divesite }
+      passProps: { divesite },
     });
   },
 });
 
-var Divebook = React.createClass({
-  render: function() {
-    return (
-      <NavigatorIOS
-        style={styles.navigator}
-        initialRoute={{
-          title: 'Divebook',
-          component: DivesitesList,
-        }}
-      />
-    );
-  }
-});
-
 var DivesiteShow = React.createClass({
   render: function() {
+    var divesite = this.props.divesite;
+    var src = mapImageSrc(divesite.location, {width: 800, height: 400});
     return (
       <View style={styles.container}>
-        <Text>Empty View</Text>
+        <Text style={styles.title}>{divesite.name}</Text>
+        <Text style={styles.subtitle}>{divesite.address}</Text>
+        <Image style={styles.map} source={{uri: src}} />
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.logDive.bind(this, divesite)}>
+            <Text style={styles.buttonText}>Log a dive here…</Text>
+        </TouchableHighlight>
       </View>
     );
   },
+
+  logDive: function(divesite) {
+    // blank on purpose
+  }
 });
 
 var styles = StyleSheet.create({
@@ -176,10 +185,29 @@ var styles = StyleSheet.create({
     paddingTop: 65,
     backgroundColor: '#F5FCFF',
   },
-  image: {
+  thumb: {
     height: 100,
     width: 100,
+  },
+  map: {
+    height: 200,
+    width: 400,
+    margin: 20,
+  },
+  button: {
+    borderRadius: 5,
+    borderWidth: 2,
+    marginTop: 20,
+    padding: 20,
+  },
+  buttonText: {
+    fontSize: 20,
   }
 });
+
+// Auxiliary functions (TODO: modularize)
+var mapImageSrc = function(geopoint, options = { width: 200, height: 200 }) {
+  return `https://maps.googleapis.com/maps/api/staticmap?markers=size:tiny|${geopoint.latitude},${geopoint.longitude}&zoom=8&size=${options.width}x${options.height}&key=${GOOGLE_MAPS_API_KEY}`
+};
 
 AppRegistry.registerComponent('Divebook', () => Divebook);
