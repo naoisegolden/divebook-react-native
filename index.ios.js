@@ -12,11 +12,15 @@ var RefreshableListView = require('react-native-refreshable-listview')
 var {
   AppRegistry,
   Button,
+  DatePickerIOS,
+  Heading,
   Image,
   ListView,
   NavigatorIOS,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableHighlight,
   View,
 } = React;
@@ -171,8 +175,112 @@ var DivesiteShow = React.createClass({
   },
 
   logDive: function(divesite) {
+    this.props.navigator.push({
+      component: DivesiteLog,
+      passProps: { divesite },
+    });
+  },
+});
+
+var DivesiteLog = React.createClass({
+  mixins: [ParseReact.Mixin],
+
+  observe: function() {
     // blank on purpose
-  }
+  },
+
+  getDefaultProps: function () {
+    return {
+      date: new Date(),
+      timeZoneOffsetInHours: (-1) * (new Date()).getTimezoneOffset() / 60,
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      date: this.props.date,
+      timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
+    };
+  },
+
+  render: function() {
+    var divesite = this.props.divesite;
+
+    return (
+      <ScrollView
+        ref='scrollView'
+        contentContainerStyle={styles.container}
+        keyboardDismissMode='on-drag'
+      >
+        <Text style={styles.subtitle}>Log dive in</Text>
+        <Text style={styles.title}>{divesite.name}</Text>
+        <Text style={styles.subtitle}>{divesite.address}</Text>
+        <Text style={styles.label}>Start Time</Text>
+        <DatePickerIOS
+          date={this.state.date}
+          mode="datetime"
+          timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
+          onDateChange={this.onDateChange}
+        />
+        <Text style={styles.label}>Max. Depth (meters)</Text>
+        <TextInput
+          ref='maxDepth'
+          style={styles.input}
+          onFocus={inputFocused.bind(this, 'maxDepth')}
+          keyboardType='numeric'
+          onChange={this.onInputMaxDepth.bind(this)}
+        />
+        <Text style={styles.label}>Water Temperature (celsius)</Text>
+        <TextInput
+          ref='temperature'
+          style={styles.input}
+          onFocus={inputFocused.bind(this, 'temperature')}
+          keyboardType='numeric'
+          onChange={this.onInputTemp.bind(this)}
+        />
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.log}>
+            <Text style={styles.buttonText}>Log it</Text>
+        </TouchableHighlight>
+      </ScrollView>
+    );
+  },
+
+  onDateChange: function(date) {
+    this.setState({
+      date: date
+    });
+  },
+
+  onInputMaxDepth: function(event) {
+    this.setState({
+      maxDepth: parseFloat(event.nativeEvent.text)
+    });
+  },
+
+  onInputTemp: function(event) {
+    this.setState({
+      temperature: parseFloat(event.nativeEvent.text)
+    });
+  },
+
+  log: function() {
+    var divesite = this.props.divesite;
+    var data = {
+      start: this.state.date,
+      maxDepth: this.state.maxDepth,
+      temperature: this.state.temperature,
+    };
+
+    ParseReact.Mutation.Create('dive', data)
+      .dispatch()
+      .then(function(dive) {
+        ParseReact.Mutation.AddRelation(dive, 'divesite', divesite)
+        alert(JSON.stringify(arguments));
+      })
+      .fail(handleError);
+  },
 });
 
 var styles = StyleSheet.create({
@@ -223,7 +331,18 @@ var styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20,
-  }
+  },
+  label: {
+    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  input: {
+    borderWidth: 1,
+    height: 40,
+    marginLeft: 10,
+    marginRight: 10,
+  },
 });
 
 // Auxiliary functions (TODO: modularize)
@@ -236,6 +355,23 @@ var positionToGeoPoint = function(position) {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude
   }
-}
+};
+
+// Scroll a component into view. Just pass the component ref string.
+// http://stackoverflow.com/questions/29313244/how-to-auto-slide-the-window-out-from-behind-keyboard-when-textinput-has-focus
+var inputFocused = function(refName) {
+  setTimeout(() => {
+    let scrollResponder = this.refs.scrollView.getScrollResponder();
+    scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+      React.findNodeHandle(this.refs[refName]),
+      110, //additionalOffset
+      true
+    );
+  }, 50);
+};
+
+var handleError = function(error) {
+  alert(error.message);
+};
 
 AppRegistry.registerComponent('Divebook', () => Divebook);
