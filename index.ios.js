@@ -30,18 +30,29 @@ Parse.initialize(
   PARSE_JAVASCRIPT_KEY,
 );
 
+// var Divebook = React.createClass({
+//   render: function() {
+//     return (
+//       <NavigatorIOS
+//         style={styles.navigator}
+//         initialRoute={{
+//           title: 'Divebook',
+//           component: DivesitesList,
+//         }}
+//       />
+//     );
+//   }
+// });
+
 var Divebook = React.createClass({
   render: function() {
     return (
-      <NavigatorIOS
-        style={styles.navigator}
-        initialRoute={{
-          title: 'Divebook',
-          component: DivesitesList,
-        }}
-      />
+      <View style={styles.splashContainer}>
+        <Text style={styles.splashText}>DIVEBOOK</Text>
+        <Image source={require('image!diver')} style={styles.splashImage} />
+      </View>
     );
-  }
+  },
 });
 
 var EmptyView = React.createClass({
@@ -284,6 +295,22 @@ var DivesiteLog = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  splashContainer: {
+    alignItems: 'center',
+    backgroundColor: '#212342',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  splashImage: {
+    height: 120,
+    width: 260,
+  },
+  splashText : {
+    color: 'white',
+    fontWeight: 'bold',
+    marginBottom: 50,
+    size: 200,
+  },
   navigator: {
     flex: 1,
   },
