@@ -7,7 +7,8 @@ var GOOGLE_MAPS_API_KEY = 'AIzaSyBDZOWrvmGMgmhimndfQa9TnFn21M_rTAQ';
 var React = require('react-native');
 var Parse = require('parse/react-native');
 var ParseReact = require('parse-react/react-native');
-var RefreshableListView = require('react-native-refreshable-listview')
+var RefreshableListView = require('react-native-refreshable-listview');
+var FBSDKLogin = require('react-native-fbsdklogin');
 
 var {
   AppRegistry,
@@ -25,34 +26,55 @@ var {
   View,
 } = React;
 
+var {
+  FBSDKLoginButton,
+} = FBSDKLogin;
+
 Parse.initialize(
   PARSE_APPLICATION_ID,
   PARSE_JAVASCRIPT_KEY,
 );
 
-// var Divebook = React.createClass({
-//   render: function() {
-//     return (
-//       <NavigatorIOS
-//         style={styles.navigator}
-//         initialRoute={{
-//           title: 'Divebook',
-//           component: DivesitesList,
-//         }}
-//       />
-//     );
-//   }
-// });
-
 var Divebook = React.createClass({
+  render: function() {
+    return (<DivebookSplash />);
+  }
+});
+
+var DivebookSplash = React.createClass({
   render: function() {
     return (
       <View style={styles.splashContainer}>
-        <Text style={styles.splashText}>DIVEBOOK</Text>
+        <Text style={styles.splashText}>Divebook</Text>
         <Image source={require('image!diver')} style={styles.splashImage} />
+        <Login />
       </View>
     );
   },
+});
+
+var Login = React.createClass({
+  render: function() {
+    return (
+      <View>
+        <FBSDKLoginButton
+          onLoginFinished={(error, result) => {
+            if (error) {
+              alert('Error logging in.');
+            } else {
+              if (result.isCanceled) {
+                alert('Login cancelled.');
+              } else {
+                alert('Logged in.');
+              }
+            }
+          }}
+          onLogoutFinished={() => alert('Logged out.')}
+          readPermissions={[]}
+          publishPermissions={['publish_actions']}/>
+      </View>
+    );
+  }
 });
 
 var EmptyView = React.createClass({
@@ -63,6 +85,20 @@ var EmptyView = React.createClass({
       </View>
     );
   },
+});
+
+var DivebookHome = React.createClass({
+  render: function() {
+    return (
+      <NavigatorIOS
+        style={styles.navigator}
+        initialRoute={{
+          title: 'Divebook',
+          component: DivesitesList,
+        }}
+      />
+    );
+  }
 });
 
 var DivesitesList = React.createClass({
@@ -304,12 +340,13 @@ var styles = StyleSheet.create({
   splashImage: {
     height: 120,
     width: 260,
+    marginBottom: 50,
+    marginTop: 50,
   },
   splashText : {
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: 50,
-    size: 200,
+    size: 240,
   },
   navigator: {
     flex: 1,
