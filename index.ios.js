@@ -23,6 +23,7 @@ var {
   Text,
   TextInput,
   TouchableHighlight,
+  StatusBarIOS,
   View,
 } = React;
 
@@ -37,7 +38,15 @@ Parse.initialize(
 
 var Divebook = React.createClass({
   render: function() {
-    return (<DivebookSplash />);
+    StatusBarIOS.setStyle('light-content', true);
+    return (
+      <NavigatorIOS
+        style={styles.navigator}
+        initialRoute={{
+          component: DivebookSplash,
+        }}
+      />
+    );
   }
 });
 
@@ -45,11 +54,19 @@ var DivebookSplash = React.createClass({
   render: function() {
     return (
       <View style={styles.splashContainer}>
-        <Text style={styles.splashText}>Divebook</Text>
+        <Text style={styles.splashText} onPress={this.continue.bind(this)}>Divebook</Text>
         <Image source={require('image!diver')} style={styles.splashImage} />
         <Login />
       </View>
     );
+  },
+
+  continue: function() {
+    StatusBarIOS.setStyle('default', true);
+    this.props.navigator.replace({
+      title: 'Divebook',
+      component: DivesitesList,
+    });
   },
 });
 
@@ -85,20 +102,6 @@ var EmptyView = React.createClass({
       </View>
     );
   },
-});
-
-var DivebookHome = React.createClass({
-  render: function() {
-    return (
-      <NavigatorIOS
-        style={styles.navigator}
-        initialRoute={{
-          title: 'Divebook',
-          component: DivesitesList,
-        }}
-      />
-    );
-  }
 });
 
 var DivesitesList = React.createClass({
@@ -346,7 +349,7 @@ var styles = StyleSheet.create({
   splashText : {
     color: 'white',
     fontWeight: 'bold',
-    size: 240,
+    fontSize: 22,
   },
   navigator: {
     flex: 1,
