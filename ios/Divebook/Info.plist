@@ -40,22 +40,9 @@
 	<string></string>
   <key>NSAppTransportSecurity</key>
   <dict>
-    <!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/-->
+    <!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
     <key>NSAllowsArbitraryLoads</key>
     <true/>
   </dict>
-  <key>CFBundleURLTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>fb193039974164898</string>
-      </array>
-    </dict>
-  </array>
-  <key>FacebookAppID</key>
-  <string>193039974164898</string>
-  <key>FacebookDisplayName</key>
-  <string>Divebook</string>
 </dict>
 </plist>
