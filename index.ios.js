@@ -43,6 +43,7 @@ var Divebook = React.createClass({
       <NavigatorIOS
         style={styles.navigator}
         initialRoute={{
+          title: 'Divebook',
           component: DivebookSplash,
         }}
       />
@@ -54,7 +55,7 @@ var DivebookSplash = React.createClass({
   render: function() {
     return (
       <View style={styles.splashContainer}>
-        <Text style={styles.splashText} onPress={this.continue.bind(this)}>Divebook</Text>
+        <Text style={styles.splashText} onPress={this.continue}>Divebook</Text>
         <Image source={require('image!diver')} style={styles.splashImage} />
         <Login />
       </View>
@@ -62,6 +63,7 @@ var DivebookSplash = React.createClass({
   },
 
   continue: function() {
+    console.log("clicked splash text");
     StatusBarIOS.setStyle('default', true);
     this.props.navigator.replace({
       title: 'Divebook',
@@ -278,7 +280,7 @@ var DivesiteLog = React.createClass({
           style={styles.input}
           onFocus={inputFocused.bind(this, 'maxDepth')}
           keyboardType='numeric'
-          onChange={this.onInputMaxDepth.bind(this)}
+          onChange={this.onInputMaxDepth}
         />
         <Text style={styles.label}>Water Temperature (celsius)</Text>
         <TextInput

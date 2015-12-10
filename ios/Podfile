@@ -1,4 +1,10 @@
 source 'https://github.com/CocoaPods/Specs.git'
-pod 'React', :subspecs => ['Core', 'RCTImage', 'RCTNetwork', 'RCTText', 'RCTWebSocket'], :path => '../node_modules/react-native'
+pod 'React', :path => '../node_modules/react-native', :subspecs => [
+  'Core',
+  'RCTImage',
+  'RCTNetwork',
+  'RCTText',
+  'RCTWebSocket'
+]
 pod 'react-native-fbsdkcore', :path => '../node_modules/react-native-fbsdkcore'
 pod 'react-native-fbsdklogin', :path => '../node_modules/react-native-fbsdklogin'
