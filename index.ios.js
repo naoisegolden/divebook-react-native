@@ -65,7 +65,7 @@ var DivebookSplash = React.createClass({
   continue: function() {
     console.log("clicked splash text");
     StatusBarIOS.setStyle('default', true);
-    this.props.navigator.replace({
+    this.props.navigator.push({
       title: 'Divebook',
       component: DivesitesList,
     });

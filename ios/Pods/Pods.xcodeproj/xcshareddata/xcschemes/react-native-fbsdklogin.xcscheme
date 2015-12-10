@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '80B89361C13EC4F5E38FBEB5'
+               BlueprintIdentifier = '1543302585D0015FC2FC8891'
                BlueprintName = 'react-native-fbsdklogin'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libreact-native-fbsdklogin.a'>

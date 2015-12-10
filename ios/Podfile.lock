@@ -26,6 +26,8 @@ PODS:
     - FBSDKLoginKit
     - React
   - React/Core (0.15.0)
+  - React/RCTGeolocation (0.15.0):
+    - React/Core
   - React/RCTImage (0.15.0):
     - React/Core
     - React/RCTNetwork
@@ -40,6 +42,7 @@ DEPENDENCIES:
   - react-native-fbsdkcore (from `../node_modules/react-native-fbsdkcore`)
   - react-native-fbsdklogin (from `../node_modules/react-native-fbsdklogin`)
   - React/Core (from `../node_modules/react-native`)
+  - React/RCTGeolocation (from `../node_modules/react-native`)
   - React/RCTImage (from `../node_modules/react-native`)
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)

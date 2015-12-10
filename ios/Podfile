@@ -1,6 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 pod 'React', :path => '../node_modules/react-native', :subspecs => [
   'Core',
+  'RCTGeolocation',
   'RCTImage',
   'RCTNetwork',
   'RCTText',
