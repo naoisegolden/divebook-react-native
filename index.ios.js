@@ -328,10 +328,15 @@ var DivesiteLog = React.createClass({
     ParseReact.Mutation.Create('dive', data)
       .dispatch()
       .then(function(dive) {
-        ParseReact.Mutation.AddRelation(dive, 'divesite', divesite)
-        alert(JSON.stringify(arguments));
+        ParseReact.Mutation.AddRelation(dive, 'divesite', divesite).dispatch();
       })
+      .then(this.handleSuccess)
       .fail(handleError);
+  },
+
+  handleSuccess: function(dive) {
+    alert("Dive logged!");
+    this.props.navigator.pop();
   },
 });
 
